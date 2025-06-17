@@ -1,13 +1,22 @@
 import mongoose from 'mongoose';
 
-console.log(process.env.MONGO_URI);
-
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    // Get MongoDB URI from environment variables
+    const mongoURI = process.env.MONGO_URI;
+    
+    // Log the URI being used (without exposing full credentials)
+    console.log('Connecting to MongoDB with URI starting with:', 
+      mongoURI ? mongoURI.substring(0, mongoURI.indexOf('@') > 0 ? mongoURI.indexOf('@') : 20) + '...' : 'undefined');
+    
+    // Connect to MongoDB
+    const conn = await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000 // Reduce timeout for faster feedback
+    });
+    
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error: ${error.message}`);
+    console.error(`MongoDB Connection Error: ${error.message}`);
     process.exit(1); 
   }
 };
