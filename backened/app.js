@@ -17,9 +17,20 @@ dotenv.config();
 const app = express();
 const _dirname = path.resolve();
 
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Standard middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5000'],
+  origin: [
+    'http://localhost:5173',  // Local development frontend
+    'http://localhost:5000',  // Local development backend
+    'https://your-render-app-name.onrender.com', // Render domain
+    process.env.FRONTEND_URL || '*' // Allow configurable frontend URL or any origin in production
+  ],
   credentials: true
 }));
 app.use(express.json());

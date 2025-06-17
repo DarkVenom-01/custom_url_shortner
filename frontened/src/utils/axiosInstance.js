@@ -1,8 +1,18 @@
 import axios from "axios"
 
+// Create a base URL that works in both development and production
+const getBaseURL = () => {
+    // In production, use relative URLs (same domain)
+    if (import.meta.env.PROD) {
+        return "";
+    }
+    // In development, use the local server
+    return "http://localhost:5000";
+}
+
 const axiosInstance = axios.create({
-    baseURL:"http://localhost:5000",
-    timeout:10000, //10s
+    baseURL: getBaseURL(),
+    timeout: 10000, //10s
     withCredentials: true // Allow cookies to be sent with requests
 })
 // Response interceptor
