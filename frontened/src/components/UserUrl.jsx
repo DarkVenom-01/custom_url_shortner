@@ -2,6 +2,16 @@ import React, { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getAllUserUrls } from '../api/user.api'
 
+// Get the base URL from environment or window location
+const getBaseUrl = () => {
+  // In production, use the current domain
+  if (import.meta.env.PROD) {
+    return `${window.location.protocol}//${window.location.host}/`;
+  }
+  // In development, use the backend URL
+  return "http://localhost:5000/";
+};
+
 const UserUrl = () => {
   const { data: urls, isLoading, isError, error } = useQuery({
     queryKey: ['userUrls'],
@@ -11,13 +21,13 @@ const UserUrl = () => {
   })
   const [copiedId, setCopiedId] = useState(null)
   const handleCopy = (url, id) => {
-    navigator.clipboard.writeText(url)
-    setCopiedId(id)
+    navigator.clipboard.writeText(`${getBaseUrl()}${url.short_url}`);
+    setCopiedId(id);
     
     // Reset the copied state after 2 seconds
     setTimeout(() => {
-      setCopiedId(null)
-    }, 2000)
+      setCopiedId(null);
+    }, 2000);
   }
 
   if (isLoading) {
@@ -80,12 +90,12 @@ const UserUrl = () => {
                 <td className="px-6 py-4">
                   <div className="text-sm">
                     <a 
-                      href={`http://localhost:5000/${url.short_url}`} 
+                      href={`${getBaseUrl()}${url.short_url}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:text-blue-900 hover:underline"
                     >
-                      {`localhost:5000/${url.short_url}`}
+                      {`${window.location.host}/${url.short_url}`}
                     </a>
                   </div>
                 </td>

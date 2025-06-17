@@ -47,12 +47,23 @@ app.use("/api/create", short_url);
 const distPath = path.join(_dirname, "frontened/dist");
 app.use(express.static(distPath));
 
+// Define frontend routes that should not be treated as short URLs
+const frontendRoutes = ['/dashboard', '/login', '/register', '/auth', '/profile'];
+
 // Short URL redirect route - with regex validation in the handler
 app.get("/:id", (req, res, next) => {
   const { id } = req.params;
+  
+  // Skip redirect for known frontend routes
+  if (frontendRoutes.includes('/' + id)) {
+    return next();
+  }
+  
+  // Only process as short URL if it matches the pattern
   if (/^[a-zA-Z0-9]{1,10}$/.test(id)) {
     return redirectFromShortUrl(req, res, next);
   }
+  
   next();
 });
 
